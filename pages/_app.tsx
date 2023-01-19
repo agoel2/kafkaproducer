@@ -18,7 +18,7 @@ export default function App({Component, pageProps}: AppProps) {
         }
         const config = {
             method: 'post',
-            url: 'https://nitqt2xv2zxeh4uwzqeklz2nw40jflyy.lambda-url.eu-west-1.on.aws',
+            url: 'https://p32fjbclbnmfsos6y2fvyedpma0fckit.lambda-url.eu-central-1.on.aws/',
             data: body
         }
 
