@@ -3,45 +3,43 @@ import Image from 'next/image'
 import {Inter} from '@next/font/google'
 import styles from '../styles/Home.module.css'
 import {useState} from 'react'
-
-const inter = Inter({subsets: ['latin']})
+import axios, {AxiosRequestConfig} from "axios";
 
 // @ts-ignore
-export default function Home({product, addToCart}) {
+export default function Home({topics, produceMessages}) {
+    const validTopics = topics.filter((obj: string) => obj.endsWith('-value') && !obj.includes('TABLE')).sort();
     const [message, setMessage] = useState('');
-    const [topic, setTopic] = useState('');
-    const [key, setKey] = useState('');
+    const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
+    const [keySchema, setKeySchema] = useState('');
 
     // @ts-ignore
     // @ts-ignore
     return (
         <>
             <main className={styles.main}>
-
-
                 <form>
                     <div className="form-group">
                         <label htmlFor="topic">Topics:</label>
                         <select className="form-control" id="topic" onChange={(e) => setTopic(e.target.value)}>
-                            {product.filter((obj: string) => obj.endsWith('-value') && !obj.includes('TABLE')).map((value: string, index: any) => {
+                            {validTopics.map((value: string, index: any) => {
                                 return <option key={value.substring(0, value.indexOf('-'))}
                                                value={value.substring(0, value.indexOf('-'))}>{value.substring(0, value.indexOf('-'))}</option>
                             })}
-
                         </select>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="key">Key:</label>
-                        <input className="form-control" id="key" onChange={(e) => setKey(e.target.value)}/>
+                        <label htmlFor="message">Key Schema:</label>
+                        <textarea className="form-control" id='keySchema' name='keySchema' rows={5} cols={80}
+                                  onChange={(e) => setKeySchema(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="message">Message:</label>
                         <textarea className="form-control" id='message' name='message' rows={20} cols={80}
-                                  onChange={(e) => setMessage(e.target.value)}/>
+                                  onChange={(e) => setMessage(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <button className="btn btn-primary btn-lg" onClick={(e) => {
-                            addToCart(e,message, topic, key)
+                            produceMessages(e, message, topic, keySchema)
                         }}>submit
                         </button>
                     </div>
@@ -51,18 +49,20 @@ export default function Home({product, addToCart}) {
     )
 }
 
-const http = require("https");
-
-
 export async function getServerSideProps(context: any) {
-    let headers = {
-        Authorization: `Basic SVdTS1NISkpURlM3UzNEUzo5UnE4Q0s1dmRMY09DVm1qMjBqMlh2bGowZDhiUTJNemYvK3BQUjcrNGhGeUpOaUdzWThBQzBtZ1RoS1l2ZzRK`
-    };
-    let a = await fetch('https://psrc-8vyvr.eu-central-1.aws.confluent.cloud/subjects/', {headers: headers})
-    let product = await a.json()
+
+    const config: AxiosRequestConfig = {
+        method: 'get',
+        auth: {
+            username: 'L42QMEHYYDIBEMWA',
+            password: 'mYAjOv+Fjvcdl+tRvyPptSJSZ3jzq7O5Rg723Qg7n2IurjTByDvECKh1XWutX5WJ',
+        },
+        url: 'https://psrc-p6o1m.eu-central-1.aws.confluent.cloud/subjects',
+    }
+
+    const response = await axios(config)
+
     return {
-        props: {product: product},
+        props: {topics: response.data},
     }
 }
-
-const axios = require('axios');
