@@ -28,7 +28,7 @@ export default function Home({validTopics, produceMessages, schemas, reloadEnv})
         <>
             <main className={styles.main}>
                 <form onSubmit={(e) => {
-                    produceMessages(e, message, topic, keySchema,environment)
+                    produceMessages(e, message, topic, keySchema, environment)
                 }}>
                     <div className="form-group">
 
@@ -107,7 +107,7 @@ async function requestSchemaRegistry(config: AxiosRequestConfig) {
 
 export async function getServerSideProps(context: any) {
 
-    const env = context.query.env;
+    const env = context.query?.env ?? 'dev';
     // @ts-ignore
     const response = await requestSchemaRegistry(envs('')[env]);
 
