@@ -5,10 +5,15 @@ import Head from "next/head";
 import 'bootstrap/dist/css/bootstrap.css'
 import {useState} from "react";
 import RandExp from "randexp";
+import {useRouter} from "next/router";
 
 export default function App({Component, pageProps}: AppProps) {
+    const router = useRouter();
+    const reloadEnv = async (env: string) => {
 
-    const produceMessages = async (e: any, message: any, topic: string, keySchema: string) => {
+        await router.push('/?env=' + env);
+    }
+    const produceMessages = async (e: any, message: any, topic: string, keySchema: string, environment: string) => {
         e.preventDefault();
         const keysToIterate = JSON.parse(keySchema);
         const keyAttribute = keysToIterate.attribute;
@@ -55,6 +60,7 @@ export default function App({Component, pageProps}: AppProps) {
 
         const body = {
             topic,
+            env: environment,
             messages: newRecords,
         }
         const config = {
@@ -69,5 +75,5 @@ export default function App({Component, pageProps}: AppProps) {
 
     return <><Head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    </Head><Component {...pageProps} produceMessages={produceMessages}/></>
+    </Head><Component {...pageProps} produceMessages={produceMessages} reloadEnv={reloadEnv}/></>
 }
