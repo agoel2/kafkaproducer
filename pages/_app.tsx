@@ -25,8 +25,14 @@ export default function App({Component, pageProps}: AppProps) {
         const newRecords = [];
 
         if (numberOfRecords === 1) {
+            let key = parsedMessage[keyAttribute];
+            if (secondaryKeyAttributes?.length >= 1) {
+                for (const secondaryKeyAttribute of secondaryKeyAttributes) {
+                    key += '__' + parsedMessage[secondaryKeyAttribute];
+                }
+            }
             newRecords.push({
-                key: parsedMessage[keyAttribute],
+                key,
                 value: parsedMessage
             });
         } else {

@@ -8,12 +8,6 @@ import {useRouter} from "next/router";
 
 // @ts-ignore
 export default function Home({validTopics, produceMessages, schemas, reloadEnv}) {
-    const router = useRouter();
-    const [message, setMessage] = useState('');
-    const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
-    const [keySchema, setKeySchema] = useState('');
-    const [environment, setEnvironment] = useState(router.query.env ?? 'dev');
-
 
     const keySchemaPlaceholder =
         JSON.stringify({
@@ -21,6 +15,12 @@ export default function Home({validTopics, produceMessages, schemas, reloadEnv})
             numberOfRecords: 2,//number of records to produce
             secondaryAttributes: ["channel"]//secondary key attributes
         }, undefined, 4);
+
+    const router = useRouter();
+    const [message, setMessage] = useState('');
+    const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
+    const [keySchema, setKeySchema] = useState(keySchemaPlaceholder);
+    const [environment, setEnvironment] = useState(router.query.env ?? 'dev');
 
     // @ts-ignore
     // @ts-ignore
@@ -53,9 +53,9 @@ export default function Home({validTopics, produceMessages, schemas, reloadEnv})
                     </div>
                     <div className="form-group">
                         <label htmlFor="keySchema">Key Schema:</label>
-                        <textarea className="form-control" id='keySchema' name='keySchema' rows={8} cols={80}
-                                  onChange={(e) => setKeySchema(e.target.value)} required
-                                  placeholder={keySchemaPlaceholder}/>
+                        <textarea className="form-control" id='keySchema' value={keySchema} name='keySchema' rows={8}
+                                  cols={80}
+                                  onChange={(e) => setKeySchema(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="message">Message:</label>
