@@ -5,9 +5,12 @@ import styles from '../styles/Home.module.css'
 import {useState} from 'react'
 import axios, {AxiosRequestConfig} from "axios";
 import {useRouter} from "next/router";
+import Link from "next/link";
+import {Loader} from "../components/loaderComp";
+import {ProducerStatus} from "../components/statusComp";
 
 // @ts-ignore
-export default function Home({validTopics, produceMessages, schemas, reloadEnv}) {
+export default function Home({validTopics, produceMessages, schemas}) {
 
     const keySchemaPlaceholder =
         JSON.stringify({
@@ -17,6 +20,8 @@ export default function Home({validTopics, produceMessages, schemas, reloadEnv})
         }, undefined, 4);
 
     const router = useRouter();
+    const [loader, setLoader] = useState(false);
+    const [status, setStatus] = useState('');
     const [message, setMessage] = useState('');
     const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
     const [keySchema, setKeySchema] = useState(keySchemaPlaceholder);
@@ -27,16 +32,22 @@ export default function Home({validTopics, produceMessages, schemas, reloadEnv})
     return (
         <>
             <main className={styles.main}>
+                <h4>Producer/Consumer for Avro messages for Confluent Kafka</h4>
+
+                <ProducerStatus status={status}></ProducerStatus>
+
+                {loader ? <Loader/> : ('')}
+
                 <form onSubmit={(e) => {
-                    produceMessages(e, message, topic, keySchema, environment)
+                    produceMessages(e, message, topic, keySchema, environment, setLoader,setStatus)
                 }}>
                     <div className="form-group">
 
                         <label htmlFor="environment">Environment:</label>
                         <select className="form-control" id="environment"
-                                onChange={(e) => {
+                                onChange={async (e) => {
                                     setEnvironment(e.target.value);
-                                    reloadEnv(e.target.value);
+                                    await router.push('/?env=' + e.target.value);
                                 }} value={environment}>
                             <option value={'dev'}>dev</option>
                             <option value={'shareddev'}>shareddev</option>
@@ -67,8 +78,9 @@ export default function Home({validTopics, produceMessages, schemas, reloadEnv})
                     </div>
 
                     <div className="form-group">
-                        <button type={'submit'} className="btn btn-primary btn-lg">submit
+                        <button type={'submit'} className="btn btn-primary btn-lg">Produce
                         </button>
+                        <Link href={'consumer'}>Switch to consumer</Link>
                     </div>
                 </form>
             </main>
