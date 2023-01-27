@@ -47,13 +47,13 @@ export function Consumer({validTopics, startConsumer, resetConsumer, loader,setL
                     </button>
                     <Link href={'/'}>Switch to producer</Link>
 
-                    {messages??[].map(function(d:string){
-                        return (<div style={{
+                    {messages??[].map((d,index)=>
+                         (<div key={'result'} style={{
                             height: '500px',
                             width: '500px',
                             overflow: 'scroll',
                         }}>{d}</div>)
-                    })}
+                    )}
 
 
                     </div>
