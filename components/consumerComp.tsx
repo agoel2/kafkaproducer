@@ -7,12 +7,19 @@ import {loader} from "next/dist/build/webpack/config/helpers";
 
 // @ts-ignore
 export function Consumer({
+                             // @ts-ignore
                              validTopics,
+                             // @ts-ignore
                              startConsumer,
+                             // @ts-ignore
                              resetConsumer,
+                             // @ts-ignore
                              loader,
+                             // @ts-ignore
                              setLoader,
+                             // @ts-ignore
                              messages,
+                             // @ts-ignore
                              setMessages
                          }): ReactElement {
     const router = useRouter();
@@ -68,7 +75,7 @@ export function Consumer({
 
                 {
                     aa && aa.map((d: string) => (
-                        <div className={styles.msg}>{JSON.stringify(d)}</div>
+                        <div key={'static'} className={styles.msg}>{JSON.stringify(d)}</div>
                     ))
                 }
 
