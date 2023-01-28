@@ -29,7 +29,7 @@ export default function App({Component, pageProps}: AppProps) {
         }
 
         let res = await axios(config)
-        console.log('result:' + JSON.stringify(res.data));
+       // console.log('result:' + JSON.stringify(res.data));
         setMessages(JSON.stringify(res.data));
         setLoader(false);
     }

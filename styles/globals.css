@@ -86,6 +86,10 @@ body {
     background-color: lightgray;
 }
 
+input,select,textarea {
+    margin-bottom: 10px;
+}
+
 body {
     color: rgb(var(--foreground-rgb));
     background-color: rgb(69,69,69);

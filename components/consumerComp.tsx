@@ -6,10 +6,23 @@ import {Loader} from "./loaderComp";
 import {loader} from "next/dist/build/webpack/config/helpers";
 
 // @ts-ignore
-export function Consumer({validTopics, startConsumer, resetConsumer, loader,setLoader, messages, setMessages}): ReactElement {
+export function Consumer({
+                             validTopics,
+                             startConsumer,
+                             resetConsumer,
+                             loader,
+                             setLoader,
+                             messages,
+                             setMessages
+                         }): ReactElement {
     const router = useRouter();
     const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
     const [environment, setEnvironment] = useState(router.query.env ?? 'dev');
+
+    const [parsedMessages, setParsedMessages] = useState(messages && messages.length > 1 ? JSON.parse(messages) : []);
+
+    const aa = messages && messages.length > 1 ? JSON.parse(messages) : [];
+    console.log(aa);
     return (
         <main className={styles.main}>
 
@@ -38,26 +51,28 @@ export function Consumer({validTopics, startConsumer, resetConsumer, loader,setL
                                            value={value.substring(0, value.indexOf('-'))}>{value.substring(0, value.indexOf('-'))}</option>
                         })}
                     </select>
-
-                    <button type={'submit'} className="btn btn-primary btn-lg">Start consumer
-                    </button>
-                    <button type={'button'} className="btn btn-primary btn-lg" onClick={(e) => {
-                        resetConsumer(e, setMessages)
-                    }}>Reset consumer
-                    </button>
-                    <Link href={'/'}>Switch to producer</Link>
-
-                    {messages??[].map((d,index)=>
-                         (<div key={'result'} style={{
-                            height: '500px',
-                            width: '500px',
-                            overflow: 'scroll',
-                        }}>{d}</div>)
-                    )}
-
-
+                    <div className={styles.buttonGrp}>
+                        <button type={'submit'} className={`${styles.buttonPrim} btn btn-primary btn-lg`}>Start consumer
+                        </button>
+                        <button type={'button'} className={`${styles.buttonPrim} btn btn-primary btn-lg`}
+                                onClick={(e) => {
+                                    resetConsumer(e, setMessages)
+                                }}>Reset consumer
+                        </button>
+                        <Link href={'/'}>Switch to producer</Link>
                     </div>
+
+                </div>
             </form>
+            <div className={styles.messages}>
+
+                {
+                    aa && aa.map((d: string) => (
+                        <div className={styles.msg}>{JSON.stringify(d)}</div>
+                    ))
+                }
+
+            </div>
         </main>
     );
 }

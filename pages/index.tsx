@@ -78,9 +78,12 @@ export default function Home({validTopics, produceMessages, schemas}) {
                     </div>
 
                     <div className="form-group">
-                        <button type={'submit'} className="btn btn-primary btn-lg">Produce
-                        </button>
-                        <Link href={'consumer'}>Switch to consumer</Link>
+                        <div className={styles.buttonGrp}>
+                            <button type={'submit'} className={`${styles.buttonPrim} btn btn-primary btn-lg`}>Produce
+                            </button>
+                            <Link href={'consumer'}>Switch to consumer</Link>
+                        </div>
+
                     </div>
                 </form>
             </main>
