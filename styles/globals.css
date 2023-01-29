@@ -90,6 +90,9 @@ input,select,textarea {
     margin-bottom: 10px;
 }
 
+a:hover {
+    color: #999;
+}
 body {
     color: rgb(var(--foreground-rgb));
     background-color: rgb(69,69,69);

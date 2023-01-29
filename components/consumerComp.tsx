@@ -71,15 +71,20 @@ export function Consumer({
 
                 </div>
             </form>
-            <div className={styles.messages}>
 
-                {
-                    aa && aa.map((d: string) => (
-                        <div key={'static'} className={styles.msg}>{JSON.stringify(d)}</div>
-                    ))
-                }
+            {aa && aa.length>0 &&
+                <div className={styles.messages}>
 
-            </div>
-        </main>
-    );
+                    {
+                        aa.map((d: string) => (
+                            <div key={'static'} className={styles.msg}>{JSON.stringify(d, undefined, 4)}</div>
+                        ))
+                    }
+                </div>
+                    }
+
+
+</main>
+)
+    ;
 }

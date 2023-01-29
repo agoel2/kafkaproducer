@@ -36,6 +36,10 @@
     max-width: 700px;
     margin: 0 auto;
     margin-top: 20px;
+    max-height: 900px;
+    overflow: scroll;
+    border: 2px solid rgb(69,69,69);
+    padding: 20px;
 }
 
 .messages .msg {
@@ -186,6 +190,8 @@
 
 .buttonGrp .buttonPrim {
     margin-right: 20px !important;
+    background: #999;
+    border: 0;
 }
 
 /* Enable hover only on non-touch devices */
