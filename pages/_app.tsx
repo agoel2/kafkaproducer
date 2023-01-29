@@ -33,6 +33,7 @@ export default function App({Component, pageProps}: AppProps) {
             setResult(JSON.stringify(res.data));
             setStatus('Success');
         } catch (error) {
+            console.error(error);
             setResult([]);
             setStatus('Error while fetching data');
         }
@@ -143,6 +144,7 @@ export default function App({Component, pageProps}: AppProps) {
 
             console.log('result:' + JSON.stringify(res));
         } catch (error) {
+            console.error(error);
             setStatus('Failed to produce message.');
         }
         setLoader(false);
@@ -151,5 +153,5 @@ export default function App({Component, pageProps}: AppProps) {
     return <><Head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </Head><NavBar/><Component {...pageProps} produceMessages={produceMessages} startConsumer={startConsumer}
-                      resetConsumer={resetConsumer} startQuery={startQuery}/></>
+                               resetConsumer={resetConsumer} startQuery={startQuery}/></>
 }
