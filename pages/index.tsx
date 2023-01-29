@@ -7,7 +7,7 @@ import axios, {AxiosRequestConfig} from "axios";
 import {useRouter} from "next/router";
 import Link from "next/link";
 import {Loader} from "../components/loaderComp";
-import {ProducerStatus} from "../components/statusComp";
+import {Status} from "../components/statusComp";
 
 // @ts-ignore
 export default function Home({validTopics, produceMessages, schemas}) {
@@ -32,14 +32,13 @@ export default function Home({validTopics, produceMessages, schemas}) {
     return (
         <>
             <main className={styles.main}>
-                <h4>Producer/Consumer for Avro messages for Confluent Kafka</h4>
 
-                <ProducerStatus status={status}></ProducerStatus>
+                <Status status={status}></Status>
 
                 {loader ? <Loader/> : ('')}
 
                 <form onSubmit={(e) => {
-                    produceMessages(e, message, topic, keySchema, environment, setLoader,setStatus)
+                    produceMessages(e, message, topic, keySchema, environment, setLoader, setStatus)
                 }}>
                     <div className="form-group">
 
@@ -81,7 +80,6 @@ export default function Home({validTopics, produceMessages, schemas}) {
                         <div className={styles.buttonGrp}>
                             <button type={'submit'} className={`${styles.buttonPrim} btn btn-primary btn-lg`}>Produce
                             </button>
-                            <Link href={'consumer'}>Switch to consumer</Link>
                         </div>
 
                     </div>

@@ -3,7 +3,6 @@ import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {Loader} from "./loaderComp";
-import {loader} from "next/dist/build/webpack/config/helpers";
 
 // @ts-ignore
 export function Consumer({
@@ -26,14 +25,11 @@ export function Consumer({
     const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
     const [environment, setEnvironment] = useState(router.query.env ?? 'dev');
 
-    const [parsedMessages, setParsedMessages] = useState(messages && messages.length > 1 ? JSON.parse(messages) : []);
-
     const aa = messages && messages.length > 1 ? JSON.parse(messages) : [];
     console.log(aa);
     return (
         <main className={styles.main}>
 
-            <h4>Producer/Consumer for Avro messages for Confluent Kafka</h4>
             {loader ? <Loader/> : ('')}
 
             <form onSubmit={(e) => {
@@ -66,7 +62,6 @@ export function Consumer({
                                     resetConsumer(e, setMessages)
                                 }}>Reset consumer
                         </button>
-                        <Link href={'/'}>Switch to producer</Link>
                     </div>
 
                 </div>
@@ -77,7 +72,7 @@ export function Consumer({
 
                     {
                         aa.map((d: string) => (
-                            <div key={'static'} className={styles.msg}>{JSON.stringify(d, undefined, 4)}</div>
+                            <div key={Math.random()} className={styles.msg}>{JSON.stringify(d, undefined, 4)}</div>
                         ))
                     }
                 </div>

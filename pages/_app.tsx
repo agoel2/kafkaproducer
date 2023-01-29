@@ -7,8 +7,37 @@ import {useState} from "react";
 import RandExp from "randexp";
 import {useRouter} from "next/router";
 import {getCookies, getCookie, setCookie, deleteCookie} from 'cookies-next';
+import {NavBar} from "../components/navBar";
 
 export default function App({Component, pageProps}: AppProps) {
+
+    const startQuery = async (e: any, result: any, setResult: any, table: string, environment: string, setLoader: any, whereClause: string, setStatus: any) => {
+        e.preventDefault();
+        setLoader(true);
+
+        try {
+            const body = {
+                table,
+                whereClause,
+                env: environment,
+                type: 'query',
+            }
+            const config = {
+                method: 'post',
+                url: 'https://p32fjbclbnmfsos6y2fvyedpma0fckit.lambda-url.eu-central-1.on.aws/',
+                data: body
+            }
+
+            let res = await axios(config)
+            // console.log('result:' + JSON.stringify(res.data));
+            setResult(JSON.stringify(res.data));
+            setStatus('Success');
+        } catch (error) {
+            setResult([]);
+            setStatus('Error while fetching data');
+        }
+        setLoader(false);
+    }
 
     const startConsumer = async (e: any, messages: any, setMessages: any, topic: string, environment: string, setLoader: any) => {
         e.preventDefault();
@@ -29,7 +58,7 @@ export default function App({Component, pageProps}: AppProps) {
         }
 
         let res = await axios(config)
-       // console.log('result:' + JSON.stringify(res.data));
+        // console.log('result:' + JSON.stringify(res.data));
         setMessages(JSON.stringify(res.data));
         setLoader(false);
     }
@@ -121,6 +150,6 @@ export default function App({Component, pageProps}: AppProps) {
 
     return <><Head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    </Head><Component {...pageProps} produceMessages={produceMessages} startConsumer={startConsumer}
-                      resetConsumer={resetConsumer}/></>
+    </Head><NavBar/><Component {...pageProps} produceMessages={produceMessages} startConsumer={startConsumer}
+                      resetConsumer={resetConsumer} startQuery={startQuery}/></>
 }
