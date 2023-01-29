@@ -5,6 +5,13 @@
     min-height: 100vh;
 }
 
+.navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 10vh;
+}
+
 
 .loading {
     width: 100%;
