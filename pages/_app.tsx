@@ -3,33 +3,45 @@ import axios from "axios";
 import Head from "next/head";
 import 'bootstrap/dist/css/bootstrap.css'
 import '../styles/globals.css'
-import {useState} from "react";
 import RandExp from "randexp";
-import {useRouter} from "next/router";
-import {getCookies, getCookie, setCookie, deleteCookie} from 'cookies-next';
+import {getCookie, setCookie} from 'cookies-next';
 import {NavBar} from "../components/navBar";
 
 export default function App({Component, pageProps}: AppProps) {
+
+    // const lambdaUrl='https://p32fjbclbnmfsos6y2fvyedpma0fckit.lambda-url.eu-central-1.on.aws/';
+    const lambdaUrl = 'https://4sp6tubgjaiuqfdgfxz5itmnai0xgsdo.lambda-url.eu-west-1.on.aws/';
+
+    const requestBody = {
+        url: lambdaUrl,
+        auth: {
+            username: 'Clarks',
+            password: 'ClarksKafkaUI@123',
+        },
+    }
 
     const startQuery = async (e: any, result: any, setResult: any, table: string, environment: string, setLoader: any, whereClause: string, setStatus: any) => {
         e.preventDefault();
         setLoader(true);
 
         try {
+            let query = 'SELECT * FROM ' + table;
+            if (whereClause && whereClause !== '') {
+                query = query + ' WHERE ' + whereClause
+            }
+
             const body = {
-                table,
-                whereClause,
+                query,
                 env: environment,
                 type: 'query',
             }
             const config = {
+                ...requestBody,
                 method: 'post',
-                url: 'https://p32fjbclbnmfsos6y2fvyedpma0fckit.lambda-url.eu-central-1.on.aws/',
-                data: body
+                data: body,
             }
 
             let res = await axios(config)
-            // console.log('result:' + JSON.stringify(res.data));
             setResult(JSON.stringify(res.data));
             setStatus('Success');
         } catch (error) {
@@ -54,18 +66,16 @@ export default function App({Component, pageProps}: AppProps) {
         }
         const config = {
             method: 'post',
-            url: 'https://p32fjbclbnmfsos6y2fvyedpma0fckit.lambda-url.eu-central-1.on.aws/',
-            data: body
+            ...requestBody,
+            data: body,
         }
 
         let res = await axios(config)
-        // console.log('result:' + JSON.stringify(res.data));
         setMessages(JSON.stringify(res.data));
         setLoader(false);
     }
     const resetConsumer = async (e: any, setMessages: any) => {
         e.preventDefault();
-
         setCookie('consumer-group-id', Math.random());
         setMessages('');
     }
@@ -130,7 +140,7 @@ export default function App({Component, pageProps}: AppProps) {
             }
             const config = {
                 method: 'post',
-                url: 'https://p32fjbclbnmfsos6y2fvyedpma0fckit.lambda-url.eu-central-1.on.aws/',
+                ...requestBody,
                 data: body
             }
 
@@ -153,5 +163,5 @@ export default function App({Component, pageProps}: AppProps) {
     return <><Head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </Head><NavBar/><Component {...pageProps} produceMessages={produceMessages} startConsumer={startConsumer}
-                               resetConsumer={resetConsumer} startQuery={startQuery}/></>
+                               resetConsumer={resetConsumer} startQuery={startQuery} lambdaUrl={lambdaUrl}/></>
 }

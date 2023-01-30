@@ -3,6 +3,7 @@ import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {Loader} from "./loaderComp";
+import {Environment} from "./envComp";
 
 // @ts-ignore
 export function Consumer({
@@ -37,15 +38,7 @@ export function Consumer({
             }}>
                 <div className="form-group">
 
-                    <label htmlFor="environment">Environment:</label>
-                    <select className="form-control" id="environment"
-                            onChange={async (e) => {
-                                setEnvironment(e.target.value);
-                                await router.push('/consumer?env=' + e.target.value);
-                            }} value={environment}>
-                        <option value={'dev'}>dev</option>
-                        <option value={'shareddev'}>shareddev</option>
-                    </select>
+                    <Environment environment={environment} setEnvironment={setEnvironment}/>
 
                     <label htmlFor="topic">Topics:</label>
                     <select className="form-control" id="topic" onChange={(e) => setTopic(e.target.value)}>
@@ -67,7 +60,7 @@ export function Consumer({
                 </div>
             </form>
 
-            {aa && aa.length>0 &&
+            {aa && aa.length > 0 &&
                 <div className={styles.messages}>
 
                     {
@@ -76,10 +69,10 @@ export function Consumer({
                         ))
                     }
                 </div>
-                    }
+            }
 
 
-</main>
-)
-    ;
+        </main>
+    )
+        ;
 }

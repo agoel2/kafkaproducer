@@ -4,6 +4,7 @@ import {useRouter} from "next/router";
 import {Loader} from "./loaderComp";
 import Link from "next/link";
 import {Status} from "./statusComp";
+import {Environment} from "./envComp";
 
 // @ts-ignore
 export function MaterializedView({
@@ -38,15 +39,7 @@ export function MaterializedView({
             }}>
                 <div className="form-group">
 
-                    <label htmlFor="environment">Environment:</label>
-                    <select className="form-control" id="environment"
-                            onChange={async (e) => {
-                                setEnvironment(e.target.value);
-                                await router.push('/materialized-views?env=' + e.target.value);
-                            }} value={environment}>
-                        <option value={'dev'}>dev</option>
-                        <option value={'shareddev'}>shareddev</option>
-                    </select>
+                    <Environment environment={environment} setEnvironment={setEnvironment}/>
 
                     <label htmlFor="table">Table:</label>
                     <select className="form-control" id="topic" onChange={(e) => setTable(e.target.value)}>
