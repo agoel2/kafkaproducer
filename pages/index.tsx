@@ -5,6 +5,7 @@ import {Loader} from "../components/loaderComp";
 import {Status} from "../components/statusComp";
 import {getTopics} from "../lib/serverProps"
 import {Environment} from "../components/envComp";
+import {DEFAULT_ENV} from "../lib/constants";
 // @ts-ignore
 export default function Home({validTopics, produceMessages}) {
 
@@ -21,7 +22,7 @@ export default function Home({validTopics, produceMessages}) {
     const [message, setMessage] = useState('');
     const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
     const [keySchema, setKeySchema] = useState(keySchemaPlaceholder);
-    const [environment, setEnvironment] = useState(router.query.env ?? 'dev');
+    const [environment, setEnvironment] = useState(router.query.env ?? DEFAULT_ENV);
 
     // @ts-ignore
     // @ts-ignore

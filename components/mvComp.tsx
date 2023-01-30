@@ -5,6 +5,7 @@ import {Loader} from "./loaderComp";
 import Link from "next/link";
 import {Status} from "./statusComp";
 import {Environment} from "./envComp";
+import {DEFAULT_ENV} from "../lib/constants";
 
 // @ts-ignore
 export function MaterializedView({
@@ -25,7 +26,7 @@ export function MaterializedView({
     const [table, setTable] = useState(tables[0]);
     const [whereClause, setWhereClause] = useState('');
     const [status, setStatus] = useState('');
-    const [environment, setEnvironment] = useState(router.query.env ?? 'dev');
+    const [environment, setEnvironment] = useState(router.query.env ?? DEFAULT_ENV);
 
     const aa = result && result.length > 1 ? JSON.parse(result) : [];
     return (
@@ -35,7 +36,7 @@ export function MaterializedView({
             {loader ? <Loader/> : ('')}
 
             <form onSubmit={(e) => {
-                startQuery(e, result, setResult, table, environment, setLoader,whereClause,setStatus)
+                startQuery(e, result, setResult, table, environment, setLoader, whereClause, setStatus)
             }}>
                 <div className="form-group">
 
@@ -50,7 +51,8 @@ export function MaterializedView({
                     </select>
 
                     <label htmlFor="whereClause">Where Clause:</label>
-                    <input className="form-control" id={'whereClause'} onChange={(e) => setWhereClause(e.target.value)}/>
+                    <input className="form-control" id={'whereClause'}
+                           onChange={(e) => setWhereClause(e.target.value)}/>
                     <div className={styles.buttonGrp}>
                         <button type={'submit'} className={`${styles.buttonPrim} btn btn-primary btn-lg`}>Start query
                         </button>
