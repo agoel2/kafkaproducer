@@ -1,5 +1,6 @@
 // @ts-ignore
 import axios, {AxiosRequestConfig} from "axios";
+import {DEFAULT_ENV} from "./constants";
 
 const axiosConfig = {
     method: 'post',
@@ -29,15 +30,17 @@ const ksqlConfig = (env: string) => {
         }
     }
 }
+
 async function requestSchemaRegistry(config: AxiosRequestConfig) {
 
     const response = await axios(config);
 
     return response.data;
 }
+
 export async function getTopics(context: any) {
 
-    const env = context.query?.env ?? 'dev';
+    const env = context.query?.env ?? DEFAULT_ENV;
 
     // @ts-ignore
     const response = await requestSchemaRegistry(topicsConfig(env));
@@ -48,6 +51,7 @@ export async function getTopics(context: any) {
         props: {validTopics},
     }
 }
+
 export async function getTables(context: any) {
 
     const env = context.query?.env ?? 'dev';
