@@ -1,1 +1,1 @@
-export const DEFAULT_ENV = 'dev';
+export const DEFAULT_ENV = 'intqa';
