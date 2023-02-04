@@ -44,7 +44,7 @@ export default function Home({validTopics, produceMessages, produceMessagesNew})
 
                     <div className="form-group">
                         <label htmlFor="numberOfRecords">Number of records:</label>
-                        <input className="form-control" id='numberOfRecords' value={numberOfRecords}
+                        <input type={'number'} className="form-control" id='numberOfRecords' value={numberOfRecords}
                                name='numberOfRecords'
                                onChange={(e) => {
                                    const result = e.target.value.replace(/\D/g, '');
