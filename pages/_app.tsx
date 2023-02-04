@@ -6,6 +6,9 @@ import '../styles/globals.css'
 import RandExp from "randexp";
 import {getCookie, setCookie} from 'cookies-next';
 import {NavBar} from "../components/navBar";
+import {KEYS} from "../lib/keys";
+import path from "path";
+import {SAMPLES} from "../lib/samples";
 
 export default function App({Component, pageProps}: AppProps) {
 
@@ -18,6 +21,52 @@ export default function App({Component, pageProps}: AppProps) {
             username: 'Clarks',
             password: 'ClarksKafkaUI@123',
         },
+    }
+
+    const produceMessagesNew = async (e: any, message: any, topic: string, environment: string, setLoader: any, setStatus: any) => {
+        e.preventDefault();
+        setLoader(true);
+        try {
+            console.log('new method');
+            // @ts-ignore
+            const keyAttributes: [] = KEYS[topic];
+
+            console.log(keyAttributes)
+            const parsedMessage = JSON.parse(message);
+            let messageKey = (Math.trunc(Math.random() * 20) + 1).toString();
+            if (keyAttributes && keyAttributes.length > 0) {
+                messageKey = keyAttributes.map((keyAttribute) => parsedMessage[keyAttribute]).join('__');
+            }
+
+            const body = {
+                topic,
+                env: environment,
+                messages: [{
+                    key: messageKey,
+                    value: parsedMessage
+                }],
+                type: 'producer',
+            }
+            console.log(body);
+            const config = {
+                method: 'post',
+                ...requestBody,
+                data: body
+            }
+
+            let res = await axios(config)
+
+            if (res.data === 'success') {
+                setStatus('Success')
+            } else {
+                setStatus('Failed to produce message')
+            }
+            console.log('result:' + JSON.stringify(res));
+        } catch (error) {
+            console.error(error);
+            setStatus('Failed to produce message.');
+        }
+        setLoader(false);
     }
 
     const startQuery = async (e: any, result: any, setResult: any, table: string, environment: string, setLoader: any, whereClause: string, setStatus: any) => {
@@ -79,47 +128,44 @@ export default function App({Component, pageProps}: AppProps) {
         setCookie('consumer-group-id', Math.random());
         setMessages('');
     }
-    const produceMessages = async (e: any, message: any, topic: string, keySchema: string, environment: string, setLoader: any, setStatus: any) => {
+    const produceMessages = async (e: any, topic: string, numberOfRecords: number, environment: string, setLoader: any, setStatus: any) => {
         e.preventDefault();
         setLoader(true);
         try {
-            const keysToIterate = JSON.parse(keySchema);
-            const keyAttribute = keysToIterate.attribute;
-            const secondaryKeyAttributes = keysToIterate.secondaryAttributes;
-            const parsedMessage = JSON.parse(message);
 
-            const numberOfRecords = keysToIterate.numberOfRecords;
 
-            const newRecords = [];
-
-            if (numberOfRecords === 1) {
-                let key = parsedMessage[keyAttribute];
-                if (secondaryKeyAttributes?.length >= 1) {
-                    for (const secondaryKeyAttribute of secondaryKeyAttributes) {
-                        key += '__' + parsedMessage[secondaryKeyAttribute];
-                    }
-                }
-                newRecords.push({
-                    key,
-                    value: parsedMessage
-                });
+            console.log(topic);
+            console.log(SAMPLES);
+            // @ts-ignore
+            const sample = SAMPLES[topic];
+            if (sample === undefined) {
+                setStatus('Bulk sample data generation not yet supported for this topic.');
             } else {
+
+                const newRecords = [];
+
                 const emailRegex = /^[0-9a-zA-Z]{3,6}@[0-9a-zA-Z]{3,6}\.com$/;
                 const numberRegex = /^[0-9]{12}$/;
-                const keyRegex = keyAttribute === 'email' ? emailRegex : numberRegex;
+                const keyRegex = (topic.includes('CUSTOMER') || topic.includes('EMAIL')) ? emailRegex : numberRegex;
+
+                // @ts-ignore
+                const keyAttributes = KEYS[topic];
+
+                const keyAttribute = keyAttributes[0];
+                const secondaryKeyAttributes = keyAttributes.slice(1);
 
                 for (let i = 0; i < numberOfRecords; i++) {
                     const keyAttributeResolved = new RandExp(keyRegex).gen();
 
                     const newRecord = {
-                        ...parsedMessage,
+                        ...sample,
                         [keyAttribute]: keyAttributeResolved
                     };
 
                     let newRecordKey = keyAttributeResolved;
                     if (secondaryKeyAttributes?.length >= 1) {
                         for (const secondaryKeyAttribute of secondaryKeyAttributes) {
-                            newRecordKey += '__' + parsedMessage[secondaryKeyAttribute];
+                            newRecordKey += '__' + sample[secondaryKeyAttribute];
                         }
                     }
 
@@ -128,40 +174,43 @@ export default function App({Component, pageProps}: AppProps) {
                         value: newRecord
                     });
                 }
+
+
+                console.log(newRecords);
+
+                const body = {
+                    topic,
+                    env: environment,
+                    messages: newRecords,
+                    type: 'producer',
+                }
+                const config = {
+                    method: 'post',
+                    ...requestBody,
+                    data: body
+                }
+
+                let res = await axios(config)
+
+                if (res.data === 'success') {
+                    setStatus('Success')
+                } else {
+                    setStatus('Failed to generate sample data')
+                }
+
+                console.log('result:' + JSON.stringify(res));
             }
-
-            console.log(newRecords);
-
-            const body = {
-                topic,
-                env: environment,
-                messages: newRecords,
-                type: 'producer',
-            }
-            const config = {
-                method: 'post',
-                ...requestBody,
-                data: body
-            }
-
-            let res = await axios(config)
-
-            if (res.data === 'success') {
-                setStatus('Success')
-            } else {
-                setStatus('Failed to produce message')
-            }
-
-            console.log('result:' + JSON.stringify(res));
         } catch (error) {
             console.error(error);
-            setStatus('Failed to produce message.');
+            setStatus('Failed to generate sample data.');
         }
+
         setLoader(false);
     }
 
     return <><Head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    </Head><NavBar/><Component {...pageProps} produceMessages={produceMessages} startConsumer={startConsumer}
+    </Head><NavBar/><Component {...pageProps} produceMessages={produceMessages} produceMessagesNew={produceMessagesNew}
+                               startConsumer={startConsumer}
                                resetConsumer={resetConsumer} startQuery={startQuery} lambdaUrl={lambdaUrl}/></>
 }

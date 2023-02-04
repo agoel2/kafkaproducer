@@ -7,13 +7,12 @@ import {getTopics} from "../lib/serverProps"
 import {Environment} from "../components/envComp";
 import {DEFAULT_ENV} from "../lib/constants";
 // @ts-ignore
-export default function Home({validTopics, produceMessages,produceMessagesNew}) {
-
+export default function Home({validTopics, produceMessages, produceMessagesNew}) {
 
     const router = useRouter();
     const [loader, setLoader] = useState(false);
     const [status, setStatus] = useState('');
-    const [message, setMessage] = useState('');
+    const [numberOfRecords, setNumberOfRecords] = useState(1);
     const [topic, setTopic] = useState(validTopics[0].substring(0, validTopics[0].indexOf('-')));
     const [environment, setEnvironment] = useState(router.query.env ?? DEFAULT_ENV);
 
@@ -28,7 +27,7 @@ export default function Home({validTopics, produceMessages,produceMessagesNew}) 
                 {loader ? <Loader/> : ('')}
 
                 <form onSubmit={(e) => {
-                    produceMessagesNew(e, message, topic, environment, setLoader, setStatus)
+                    produceMessages(e, topic, numberOfRecords, environment, setLoader, setStatus)
                 }}>
                     <div className="form-group">
 
@@ -42,18 +41,23 @@ export default function Home({validTopics, produceMessages,produceMessagesNew}) 
                             })}
                         </select>
                     </div>
+
                     <div className="form-group">
-                        <label htmlFor="message">Message:</label>
-                        <textarea className="form-control" id='message' name='message' rows={20}
-                                  cols={80}
-                                  onChange={(e) => setMessage(e.target.value)} required
+                        <label htmlFor="numberOfRecords">Number of records:</label>
+                        <input className="form-control" id='numberOfRecords' value={numberOfRecords}
+                               name='numberOfRecords'
+                               onChange={(e) => {
+                                   const result = e.target.value.replace(/\D/g, '');
+                                   setNumberOfRecords(parseInt(result));
+                               }
+                               } required
                         />
 
                     </div>
 
                     <div className="form-group">
                         <div className={styles.buttonGrp}>
-                            <button type={'submit'} className={`${styles.buttonPrim} btn btn-primary btn-lg`}>Produce
+                            <button type={'submit'} className={`${styles.buttonPrim} btn btn-primary btn-lg`}>Generate
                             </button>
                         </div>
 
@@ -63,6 +67,7 @@ export default function Home({validTopics, produceMessages,produceMessagesNew}) 
         </>
     )
 }
+
 export async function getServerSideProps(context: any) {
 
     return await getTopics(context);
