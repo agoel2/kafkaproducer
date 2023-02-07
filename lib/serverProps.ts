@@ -45,7 +45,7 @@ export async function getTopics(context: any) {
     // @ts-ignore
     const response = await requestSchemaRegistry(topicsConfig(env));
 
-    const validTopics = response.filter((obj: string) => obj.endsWith('-value') && !obj.includes('TABLE') && !obj.includes('confluent')).sort();
+    const validTopics = response.filter((obj: string) => obj.endsWith('-value') && !obj.includes('TABLE') && !obj.includes('MATERIALIZED') && !obj.includes('confluent')).sort();
 
     return {
         props: {validTopics},
