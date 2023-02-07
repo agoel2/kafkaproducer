@@ -1,5 +1,5 @@
 export const KEYS = {
-    'ASSORTMENTS': ['product_id'],
+    'ASSORTMENTS': ['productCode'],
     'CATEGORIES': ['code', 'parent'],
     'PRODUCTS_VARIANTS': ['identifier'],
     'PRODUCTS_BASE': ['code'],
@@ -10,5 +10,6 @@ export const KEYS = {
     'STOCK': ['product_id', 'fulfillment_group_id'],
     'CUSTOMERS_MARKETING_PREFERENCES': ['emailAddress'],
     'TRANSACTIONAL_EMAILS': ['to'],
-    'RATINGS_AND_REVIEWS':['productcode','locale']
+    'RATINGS_AND_REVIEWS': ['productcode', 'locale'],
+    'ORDERS_CREATE': ['external_id']
 }

@@ -27,11 +27,9 @@ export default function App({Component, pageProps}: AppProps) {
         e.preventDefault();
         setLoader(true);
         try {
-            console.log('new method');
             // @ts-ignore
             const keyAttributes: [] = KEYS[topic];
 
-            console.log(keyAttributes)
             const parsedMessage = JSON.parse(message);
             let messageKey = (Math.trunc(Math.random() * 20) + 1).toString();
             if (keyAttributes && keyAttributes.length > 0) {
@@ -134,8 +132,6 @@ export default function App({Component, pageProps}: AppProps) {
         try {
 
 
-            console.log(topic);
-            console.log(SAMPLES);
             // @ts-ignore
             const sample = SAMPLES[topic];
             if (sample === undefined) {
