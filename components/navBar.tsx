@@ -11,6 +11,7 @@ export const NavBar = () => {
                     <Link href="/consumer">Consumer</Link>
                     <Link href="/materialized-views">Materialized Views</Link>
                     <Link href="/generator">Generator</Link>
+                    <Link href="/validator">Validator</Link>
                 </nav>
             </div>
         </header></main>
