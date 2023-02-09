@@ -7,12 +7,10 @@ import RandExp from "randexp";
 import {getCookie, setCookie} from 'cookies-next';
 import {NavBar} from "../components/navBar";
 import {KEYS} from "../lib/keys";
-import path from "path";
 import {SAMPLES} from "../lib/samples";
 
 export default function App({Component, pageProps}: AppProps) {
 
-    // const lambdaUrl='https://p32fjbclbnmfsos6y2fvyedpma0fckit.lambda-url.eu-central-1.on.aws/';
     const lambdaUrl = 'https://4sp6tubgjaiuqfdgfxz5itmnai0xgsdo.lambda-url.eu-west-1.on.aws/';
 
     const requestBody = {
@@ -23,6 +21,37 @@ export default function App({Component, pageProps}: AppProps) {
         },
     }
 
+    const validate = async (e: any, message: any, topic: string, environment: string, setLoader: any, setStatus: any) => {
+        e.preventDefault();
+        setLoader(true);
+        try {
+
+            const body = {
+                topic,
+                env: environment,
+                message:JSON.parse(message),
+                type: 'validator',
+            }
+            const config = {
+                method: 'post',
+                ...requestBody,
+                data: body
+            }
+
+            let res = await axios(config)
+
+            if (res.data === 'success') {
+                setStatus('Valid message')
+            } else {
+                setStatus('Invalid message')
+            }
+            console.log('result:' + JSON.stringify(res));
+        } catch (error) {
+            console.error(error);
+            setStatus('Invalid message.');
+        }
+        setLoader(false);
+    }
     const produceMessagesNew = async (e: any, message: any, topic: string, environment: string, setLoader: any, setStatus: any) => {
         e.preventDefault();
         setLoader(true);
@@ -208,5 +237,6 @@ export default function App({Component, pageProps}: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </Head><NavBar/><Component {...pageProps} produceMessages={produceMessages} produceMessagesNew={produceMessagesNew}
                                startConsumer={startConsumer}
+                               validate={validate}
                                resetConsumer={resetConsumer} startQuery={startQuery} lambdaUrl={lambdaUrl}/></>
 }
