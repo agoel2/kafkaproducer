@@ -17,6 +17,7 @@ export function Environment({setEnvironment, environment}): ReactElement {
             <option value={'intqa'}>intqa</option>
             <option value={'sit'}>sit</option>
             <option value={'uat'}>uat</option>
+            <option value={'preprod'}>preprod</option>
         </select>
     </>);
 }
