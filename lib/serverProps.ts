@@ -19,6 +19,15 @@ const topicsConfig = (env: string) => {
         }
     }
 }
+
+const samplesConfig = () => {
+    return {
+        ...axiosConfig,
+        data: {
+            type: 'samples',
+        }
+    }
+}
 const ksqlConfig = (env: string) => {
     return {
         ...axiosConfig,
@@ -36,6 +45,26 @@ async function requestSchemaRegistry(config: AxiosRequestConfig) {
     const response = await axios(config);
 
     return response.data;
+}
+
+export async function getSamples(context: any) {
+    const response = await axios(samplesConfig());
+
+    const samples = response.data;
+
+
+    const obj = samples.reduce((acc: { [x: string]: any; }, cur: any) => {
+
+        const key = Object.getOwnPropertyNames(cur)[0]
+        acc[key] = cur;
+        return acc;
+    }, {});
+
+    const topics = await getTopics(context);
+
+    return {
+        props: {samples: obj, topics: topics.props.validTopics},
+    }
 }
 
 export async function getTopics(context: any) {
