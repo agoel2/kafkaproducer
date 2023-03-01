@@ -13,6 +13,7 @@ export function Environment({setEnvironment, environment}): ReactElement {
                 }} value={environment}>
             <option value={'intqa'}>intqa (Integration QA)</option>
             <option value={'qa'}>qa (Grid ES QA)</option>
+            <option value={'sit'}>SIT</option>
         </select>
     </>);
 }
