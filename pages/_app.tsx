@@ -8,19 +8,17 @@ import {getCookie, setCookie} from 'cookies-next';
 import {NavBar} from "../components/navBar";
 import {KEYS} from "../lib/keys";
 import {SAMPLES} from "../lib/samples";
+import {LAMBDA_URL} from "../lib/constants";
 
 export default function App({Component, pageProps}: AppProps) {
 
-    const lambdaUrl = 'https://4sp6tubgjaiuqfdgfxz5itmnai0xgsdo.lambda-url.eu-west-1.on.aws/';
-
     const requestBody = {
-        url: lambdaUrl,
+        url: LAMBDA_URL,
         auth: {
             username: 'Clarks',
             password: 'ClarksKafkaUI@123',
         },
     }
-
     const validate = async (e: any, message: any, topic: string, environment: string, setLoader: any, setStatus: any) => {
         e.preventDefault();
         setLoader(true);
@@ -29,7 +27,7 @@ export default function App({Component, pageProps}: AppProps) {
             const body = {
                 topic,
                 env: environment,
-                message:JSON.parse(message),
+                message: JSON.parse(message),
                 type: 'validator',
             }
             const config = {
@@ -45,7 +43,6 @@ export default function App({Component, pageProps}: AppProps) {
             } else {
                 setStatus('Invalid message')
             }
-            console.log('result:' + JSON.stringify(res));
         } catch (error) {
             console.error(error);
             setStatus('Invalid message.');
@@ -74,7 +71,6 @@ export default function App({Component, pageProps}: AppProps) {
                 }],
                 type: 'producer',
             }
-            console.log(body);
             const config = {
                 method: 'post',
                 ...requestBody,
@@ -88,7 +84,6 @@ export default function App({Component, pageProps}: AppProps) {
             } else {
                 setStatus('Failed to produce message')
             }
-            console.log('result:' + JSON.stringify(res));
         } catch (error) {
             console.error(error);
             setStatus('Failed to produce message.');
@@ -159,8 +154,6 @@ export default function App({Component, pageProps}: AppProps) {
         e.preventDefault();
         setLoader(true);
         try {
-
-
             // @ts-ignore
             const sample = SAMPLES[topic];
             if (sample === undefined) {
@@ -199,10 +192,6 @@ export default function App({Component, pageProps}: AppProps) {
                         value: newRecord
                     });
                 }
-
-
-                console.log(newRecords);
-
                 const body = {
                     topic,
                     env: environment,
@@ -222,8 +211,6 @@ export default function App({Component, pageProps}: AppProps) {
                 } else {
                     setStatus('Failed to generate sample data')
                 }
-
-                console.log('result:' + JSON.stringify(res));
             }
         } catch (error) {
             console.error(error);
@@ -238,5 +225,5 @@ export default function App({Component, pageProps}: AppProps) {
     </Head><NavBar/><Component {...pageProps} produceMessages={produceMessages} produceMessagesNew={produceMessagesNew}
                                startConsumer={startConsumer}
                                validate={validate}
-                               resetConsumer={resetConsumer} startQuery={startQuery} lambdaUrl={lambdaUrl}/></>
+                               resetConsumer={resetConsumer} startQuery={startQuery} lambdaUrl={LAMBDA_URL}/></>
 }
