@@ -1,10 +1,10 @@
 // @ts-ignore
 import axios, {AxiosRequestConfig} from "axios";
-import {DEFAULT_ENV} from "./constants";
+import {DEFAULT_ENV, LAMBDA_URL} from "./constants";
 
 const axiosConfig = {
     method: 'post',
-    url: 'https://4sp6tubgjaiuqfdgfxz5itmnai0xgsdo.lambda-url.eu-west-1.on.aws/',
+    url: LAMBDA_URL,
     auth: {
         username: 'Clarks',
         password: 'ClarksKafkaUI@123',

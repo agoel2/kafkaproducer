@@ -28,7 +28,6 @@ export function Consumer({
     const [environment, setEnvironment] = useState(router.query.env ?? DEFAULT_ENV);
 
     const aa = messages && messages.length > 1 ? JSON.parse(messages) : [];
-    console.log(aa);
     return (
         <main className={styles.main}>
 
