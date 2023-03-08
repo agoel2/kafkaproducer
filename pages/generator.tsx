@@ -3,11 +3,12 @@ import {useState} from 'react'
 import {useRouter} from "next/router";
 import {Loader} from "../components/loaderComp";
 import {Status} from "../components/statusComp";
-import {getTopics} from "../lib/serverProps"
+import {getSamples, getTopics} from "../lib/serverProps"
 import {Environment} from "../components/envComp";
 import {DEFAULT_ENV} from "../lib/constants";
+import fs from "fs";
 // @ts-ignore
-export default function Home({validTopics, produceMessages, produceMessagesNew}) {
+export default function Home({validTopics, produceMessages, samples}) {
 
     const router = useRouter();
     const [loader, setLoader] = useState(false);
@@ -27,7 +28,7 @@ export default function Home({validTopics, produceMessages, produceMessagesNew})
                 {loader ? <Loader/> : ('')}
 
                 <form onSubmit={(e) => {
-                    produceMessages(e, topic, numberOfRecords, environment, setLoader, setStatus)
+                    produceMessages(e, topic, numberOfRecords, environment, setLoader, setStatus,samples)
                 }}>
                     <div className="form-group">
 
@@ -70,5 +71,10 @@ export default function Home({validTopics, produceMessages, produceMessagesNew})
 
 export async function getServerSideProps(context: any) {
 
-    return await getTopics(context);
+    const samples = await getSamples(context);
+
+    const {props: {validTopics}} = await getTopics(context);
+    return {
+        props: {validTopics,samples},
+    }
 }

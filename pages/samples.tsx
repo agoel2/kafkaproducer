@@ -39,11 +39,5 @@ export default function Home({samples, topics}) {
 
 export async function getStaticProps(context: any) {
 
-    const samples = await getSamples(context);
-
-    const jsonString = JSON.stringify(samples);
-
-    fs.writeFileSync('./public/samples.json', jsonString);
-
-    return samples;
+    return getSamples(context);
 }
