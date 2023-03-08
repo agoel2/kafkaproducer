@@ -1,5 +1,6 @@
 export const KEYS = {
     'ASSORTMENTS': ['productCode'],
+    'BADGES': ['code'],
     'CATEGORIES': ['code', 'parent'],
     'PRODUCTS_VARIANTS': ['identifier'],
     'PRODUCTS_BASE': ['code'],
