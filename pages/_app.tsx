@@ -7,8 +7,8 @@ import RandExp from "randexp";
 import {getCookie, setCookie} from 'cookies-next';
 import {NavBar} from "../components/navBar";
 import {KEYS} from "../lib/keys";
-import {SAMPLES} from "../lib/samples";
 import {LAMBDA_URL} from "../lib/constants";
+import getConfig from "next/config";
 
 export default function App({Component, pageProps}: AppProps) {
 
@@ -155,7 +155,9 @@ export default function App({Component, pageProps}: AppProps) {
         setLoader(true);
         try {
             // @ts-ignore
-            const sample = SAMPLES[topic];
+            const {publicRuntimeConfig: {data}} = getConfig();
+
+            const sample = (data?.props?.samples[topic])[topic].message.value;
             if (sample === undefined) {
                 setStatus('Bulk sample data generation not yet supported for this topic.');
             } else {

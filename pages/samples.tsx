@@ -1,11 +1,7 @@
 import styles from '../styles/Home.module.css'
 import {useState} from 'react'
-import {useRouter} from "next/router";
-import {Loader} from "../components/loaderComp";
-import {Status} from "../components/statusComp";
-import {getSamples, getTopics} from "../lib/serverProps"
-import {Environment} from "../components/envComp";
-import {DEFAULT_ENV} from "../lib/constants";
+import {getSamples} from "../lib/serverProps"
+import fs from 'fs';
 // @ts-ignore
 export default function Home({samples, topics}) {
 
@@ -20,32 +16,34 @@ export default function Home({samples, topics}) {
             <main className={styles.main}>
 
                 <form>
-                <div className="form-group">
-                    <label htmlFor="topic">Topics:</label>
-                    <select className="form-control" id="topic" onChange={(e) => {
-                        setTopic(e.target.value);
-                        setSample(samples[e.target.value]);
-                    }}>
-                        {topics.map((value: string, index: any) => {
-                            return <option key={value.substring(0, value.indexOf('-'))}
-                                           value={value.substring(0, value.indexOf('-'))}>{value.substring(0, value.indexOf('-'))}</option>
-                        })}
-                    </select>
-                </div>
-                <div className={styles.messages}>
-                    {sample && JSON.stringify(sample[topic]?.message?.value, undefined, 2)}
-                </div>
+                    <div className="form-group">
+                        <label htmlFor="topic">Topics:</label>
+                        <select className="form-control" id="topic" onChange={(e) => {
+                            setTopic(e.target.value);
+                            setSample(samples[e.target.value]);
+                        }}>
+                            {topics.map((value: string, index: any) => {
+                                return <option key={value.substring(0, value.indexOf('-'))}
+                                               value={value.substring(0, value.indexOf('-'))}>{value.substring(0, value.indexOf('-'))}</option>
+                            })}
+                        </select>
+                    </div>
+                    <div className={styles.messages}>
+                        {sample && JSON.stringify(sample[topic]?.message?.value, undefined, 2)}
+                    </div>
                 </form>
             </main>
         </>
     )
 }
 
-// export async function getStaticProps(context: any) {
-//     return await getSamples();
-// }
-
 export async function getStaticProps(context: any) {
 
-    return await getSamples(context);
+    const samples = await getSamples(context);
+
+    const jsonString = JSON.stringify(samples);
+
+    fs.writeFileSync('./public/samples.json', jsonString);
+
+    return samples;
 }
