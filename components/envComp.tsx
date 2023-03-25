@@ -12,6 +12,7 @@ export function Environment({setEnvironment, environment}): ReactElement {
                     await router.push('?env=' + e.target.value);
                 }} value={environment}>
             <option value={'dev'}>dev</option>
+            <option value={'demo'}>demo</option>
             <option value={'shareddev'}>shareddev</option>
             <option value={'qa'}>qa</option>
             <option value={'intqa'}>intqa</option>
