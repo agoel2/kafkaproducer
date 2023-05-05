@@ -7,7 +7,6 @@ frontend:
     build:
       commands:
         - env | grep -e ACCESS_KEY -e ACCESS_SECRET -e DB_PASS >> .env.production
-        - env | grep -e NEXT_PUBLIC_ >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
@@ -16,3 +15,4 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+      - .next/cache/**/*
