@@ -1,5 +1,4 @@
 import type {AppProps} from 'next/app'
-import axios from "axios";
 import Head from "next/head";
 import 'bootstrap/dist/css/bootstrap.css'
 import '../styles/globals.css'
@@ -7,37 +6,61 @@ import RandExp from "randexp";
 import {getCookie, setCookie} from 'cookies-next';
 import {NavBar} from "../components/navBar";
 import {KEYS} from "../lib/keys";
-import {LAMBDA_URL} from "../lib/constants";
+import {LAMBDA_HOST, LAMBDA_URL} from "../lib/constants";
+import * as AWS4 from "aws4";
+import axios from "axios";
+
+const axiosConfig = {
+    host: LAMBDA_HOST,
+    service: 'lambda',
+    region: 'eu-west-1',
+    path: '/',
+    headers: {
+        'x-authorization': `Basic ${Buffer.from('Clarks:ClarksKafkaUI@123').toString('base64')}`,
+        'content-type': 'application/json'
+    },
+    method: 'POST',
+    url: LAMBDA_URL,
+}
+
+function signRequest(options: any) {
+    return AWS4.sign(options, {
+        accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY,
+        secretAccessKey: process.env.NEXT_PUBLIC_ACCESS_SECRET,
+    })
+}
+
+async function makeRequest(config: any) {
+
+    delete config.headers['Host']
+    delete config.headers['Content-Length']
+    const response = await axios(config);
+
+    return response.data;
+}
 
 export default function App({Component, pageProps}: AppProps) {
 
-    const requestBody = {
-        url: LAMBDA_URL,
-        auth: {
-            username: 'Clarks',
-            password: 'ClarksKafkaUI@123',
-        },
-    }
     const validate = async (e: any, message: any, topic: string, environment: string, setLoader: any, setStatus: any) => {
         e.preventDefault();
         setLoader(true);
         try {
 
-            const body = {
+            const data = {
                 topic,
                 env: environment,
                 message: JSON.parse(message),
                 type: 'validator',
             }
             const config = {
-                method: 'post',
-                ...requestBody,
-                data: body
+                ...axiosConfig,
+                body: JSON.stringify(data),
+                data
             }
 
-            let res = await axios(config)
+            let res = await makeRequest(signRequest(config));
 
-            if (res.data === 'success') {
+            if (res === 'success') {
                 setStatus('Valid message')
             } else {
                 setStatus('Invalid message')
@@ -61,7 +84,7 @@ export default function App({Component, pageProps}: AppProps) {
                 messageKey = keyAttributes.map((keyAttribute) => parsedMessage[keyAttribute]).join('__');
             }
 
-            const body = {
+            const data = {
                 topic,
                 env: environment,
                 messages: [{
@@ -71,14 +94,14 @@ export default function App({Component, pageProps}: AppProps) {
                 type: 'producer',
             }
             const config = {
-                method: 'post',
-                ...requestBody,
-                data: body
+                ...axiosConfig,
+                body: JSON.stringify(data),
+                data
             }
 
-            let res = await axios(config)
+            let res = await makeRequest(signRequest(config))
 
-            if (res.data === 'success') {
+            if (res === 'success') {
                 setStatus('Success')
             } else {
                 setStatus('Failed to produce message')
@@ -100,19 +123,19 @@ export default function App({Component, pageProps}: AppProps) {
                 query = query + ' WHERE ' + whereClause
             }
 
-            const body = {
+            const data = {
                 query,
                 env: environment,
                 type: 'query',
             }
             const config = {
-                ...requestBody,
-                method: 'post',
-                data: body,
+                ...axiosConfig,
+                data,
+                body: JSON.stringify(data),
             }
 
-            let res = await axios(config)
-            setResult(JSON.stringify(res.data));
+            let res = await makeRequest(signRequest(config))
+            setResult(JSON.stringify(res));
             setStatus('Success');
         } catch (error) {
             console.error(error);
@@ -128,20 +151,20 @@ export default function App({Component, pageProps}: AppProps) {
 
         let consumerGroupId = getCookie('consumer-group-id');
 
-        const body = {
+        const data = {
             topic,
             env: environment,
             type: 'consumer',
             consumerGroupId,
         }
         const config = {
-            method: 'post',
-            ...requestBody,
-            data: body,
+            ...axiosConfig,
+            data,
+            body: JSON.stringify(data),
         }
 
-        let res = await axios(config)
-        setMessages(JSON.stringify(res.data));
+        let res = await makeRequest(signRequest(config))
+        setMessages(JSON.stringify(res));
         setLoader(false);
     }
     const resetConsumer = async (e: any, setMessages: any) => {
@@ -149,7 +172,7 @@ export default function App({Component, pageProps}: AppProps) {
         setCookie('consumer-group-id', Math.random());
         setMessages('');
     }
-    const produceMessages = async (e: any, topic: string, numberOfRecords: number, environment: string, setLoader: any, setStatus: any,samples:any) => {
+    const produceMessages = async (e: any, topic: string, numberOfRecords: number, environment: string, setLoader: any, setStatus: any, samples: any) => {
         e.preventDefault();
         setLoader(true);
         try {
@@ -192,21 +215,21 @@ export default function App({Component, pageProps}: AppProps) {
                         value: newRecord
                     });
                 }
-                const body = {
+                const data = {
                     topic,
                     env: environment,
                     messages: newRecords,
                     type: 'producer',
                 }
                 const config = {
-                    method: 'post',
-                    ...requestBody,
-                    data: body
+                    ...axiosConfig,
+                    data,
+                    body: JSON.stringify(data),
                 }
 
-                let res = await axios(config)
+                let res = await makeRequest(signRequest(config))
 
-                if (res.data === 'success') {
+                if (res === 'success') {
                     setStatus('Success')
                 } else {
                     setStatus('Failed to generate sample data')
