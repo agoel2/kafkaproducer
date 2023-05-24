@@ -183,43 +183,14 @@ export default function App({Component, pageProps}: AppProps) {
                 setStatus('Bulk sample data generation not yet supported for this topic.');
             } else {
 
-                const newRecords = [];
-
-                const emailRegex = /^[0-9a-zA-Z]{3,6}@[0-9a-zA-Z]{3,6}\.com$/;
-                const numberRegex = /^[0-9]{12}$/;
-                const keyRegex = (topic.includes('CUSTOMER') || topic.includes('EMAIL')) ? emailRegex : numberRegex;
-
-                // @ts-ignore
-                const keyAttributes = KEYS[topic];
-
-                const keyAttribute = keyAttributes[0];
-                const secondaryKeyAttributes = keyAttributes.slice(1);
-
-                for (let i = 0; i < numberOfRecords; i++) {
-                    const keyAttributeResolved = new RandExp(keyRegex).gen();
-
-                    const newRecord = {
-                        ...sample,
-                        [keyAttribute]: keyAttributeResolved
-                    };
-
-                    let newRecordKey = keyAttributeResolved;
-                    if (secondaryKeyAttributes?.length >= 1) {
-                        for (const secondaryKeyAttribute of secondaryKeyAttributes) {
-                            newRecordKey += '__' + sample[secondaryKeyAttribute];
-                        }
-                    }
-
-                    newRecords.push({
-                        key: newRecordKey,
-                        value: newRecord
-                    });
-                }
                 const data = {
                     topic,
                     env: environment,
-                    messages: newRecords,
-                    type: 'producer',
+                    numberOfRecords,
+                    // @ts-ignore
+                    keyAttributes: KEYS[topic],
+                    sample,
+                    type: 'generator',
                 }
                 const config = {
                     ...axiosConfig,
